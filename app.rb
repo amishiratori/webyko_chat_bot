@@ -19,27 +19,33 @@ post '/callback' do
     if request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
       message = request_body['event']['text']
 
-      request_content = {
-        'key' => ENV['USER_LOCAL_TOKEN'],
-        'message' => CGI.escape(message)
-      }
-      request_params = request_content.reduce([]) do |params, (key, value)|
-        params << "#{key}=#{value}"
-      end
-      chat_response = HTTP.get('https://chatbot-api.userlocal.jp/api/chat?' + request_params.join('&'))
-      return_result = JSON.parse(chat_response)
-      puts return_result
-
-      slack_response = HTTP.post(
-        'https://slack.com/api/chat.postMessage',
-        params: {
-          token: ENV['SLACK_API_TOKEN'],
-          channel: '#times_webyko',
-          text: return_result['result'],
-          as_user: true
+      if message.include?('joined #times_webyko')
+        user = request_body['event']['name']
+        return_text = "#{user}さんこんにちは！\nうぇびこの部屋へようこそ！"
+        puts return_text
+      else
+        request_content = {
+          'key' => ENV['USER_LOCAL_TOKEN'],
+          'message' => CGI.escape(message)
         }
-      )
-      'ok'
+        request_params = request_content.reduce([]) do |params, (key, value)|
+          params << "#{key}=#{value}"
+        end
+        chat_response = HTTP.get('https://chatbot-api.userlocal.jp/api/chat?' + request_params.join('&'))
+        return_hash = JSON.parse(chat_response)
+        return_text = return_hash['result']
+        puts return_text
+      end
+        slack_response = HTTP.post(
+          'https://slack.com/api/chat.postMessage',
+          params: {
+            token: ENV['SLACK_API_TOKEN'],
+            channel: '#times_webyko',
+            text: return_text,
+            as_user: true
+          }
+        )
+        'ok'
     end
   end
 end
