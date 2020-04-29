@@ -51,7 +51,7 @@ post '/callback' do
           'text' => return_text,
           'as_user' => true
         )
-        puts res.body
+        puts slack_res.body
         'ok'
     end
   end
