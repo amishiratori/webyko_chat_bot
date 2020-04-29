@@ -3,7 +3,7 @@ Bundler.require
 require 'sinatra/reloader' if development?
 require 'json'
 require 'dotenv'
-require 'http'
+require 'net/http'
 require 'slack-ruby-client'
 
 Dotenv.load
@@ -21,38 +21,37 @@ post '/callback' do
 
       if message.include?('joined')
         user = request_body['event']['name']
-        get_user_name = HTTP.get(
-          'https://slack.com/api/users.info',
-          params: {
+        user_info_uri = URI('https://slack.com/api/users.info')
+        user_info_params = {
             token: ENV['SLACK_API_TOKEN'],
             user: user
           }
-        )
-        user_name = get_user_name['user']['name']
+        user_info_uri.query = URI.encode_www_form(user_info_params)
+        user_info_res = Net::HTTP.get_response(user_info_uri)
+        user_name = JSON.parse(user_info_res.body)['user']['name']
         return_text = "#{user_name}さんこんにちは！\nうぇびこの部屋へようこそ！"
         puts return_text
       else
-        request_content = {
-          'key' => ENV['USER_LOCAL_TOKEN'],
-          'message' => CGI.escape(message)
+        chat_params = {
+          key: ENV['USER_LOCAL_TOKEN'],
+          message: CGI.escape(message)
         }
-        request_params = request_content.reduce([]) do |params, (key, value)|
-          params << "#{key}=#{value}"
-        end
-        chat_response = HTTP.get('https://chatbot-api.userlocal.jp/api/chat?' + request_params.join('&'))
-        return_hash = JSON.parse(chat_response)
+        chat_uri = URI('https://chatbot-api.userlocal.jp/api/chat')
+        chat_uri.query = URI.encode_www_form(chat_params)
+        chat_res = Net::HTTP.get_response(chat_uri)
+        return_hash = JSON.parse(chat_res)
         return_text = return_hash['result']
         puts return_text
       end
-        slack_response = HTTP.post(
-          'https://slack.com/api/chat.postMessage',
-          params: {
-            token: ENV['SLACK_API_TOKEN'],
-            channel: '#times_webyko',
-            text: return_text,
-            as_user: true
-          }
+        slack_uri = URI('https://slack.com/api/chat.postMessage')
+        slack_res = Net::HTTP.post_form(
+          uri,
+          'token' => ENV['SLACK_API_TOKEN'],
+          'channel' => '#times_webyko',
+          'text' => return_text,
+          'as_user' => true
         )
+        puts res.body
         'ok'
     end
   end
