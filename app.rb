@@ -32,10 +32,10 @@ post '/callback' do
       return_result = JSON.parse(chat_response)
       puts return_result
 
-      client.chat_postMessage()
+      client.chat_postMessage(
           channel: '#times_webyko',
           text: return_result['result'],
-          as_user: true
+          as_user: 'true'
       )
       'ok'
     end
