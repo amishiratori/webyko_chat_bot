@@ -39,7 +39,7 @@ post '/callback' do
         chat_uri = URI('https://chatbot-api.userlocal.jp/api/chat')
         chat_uri.query = URI.encode_www_form(chat_params)
         chat_res = Net::HTTP.get_response(chat_uri)
-        return_hash = JSON.parse(chat_res)
+        return_hash = JSON.parse(chat_res.body)
         return_text = return_hash['result']
         puts return_text
       end
