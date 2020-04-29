@@ -21,7 +21,15 @@ post '/callback' do
 
       if message.include?('joined')
         user = request_body['event']['name']
-        return_text = "#{user}さんこんにちは！\nうぇびこの部屋へようこそ！"
+        get_user_name = HTTP.get(
+          'https://slack.com/api/users.info',
+          params: {
+            token: ENV['SLACK_API_TOKEN'],
+            user: user
+          }
+        )
+        user_name = get_user_name['user']['name']
+        return_text = "#{user_name}さんこんにちは！\nうぇびこの部屋へようこそ！"
         puts return_text
       else
         request_content = {
