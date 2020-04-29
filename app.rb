@@ -32,10 +32,14 @@ post '/callback' do
       return_result = JSON.parse(chat_response)
       puts return_result
 
-      client.chat_postMessage(
+      slack_response = HTTP.post(
+        'https://slack.com/api/chat.postMessage',
+        params: {
+          token: ENV['SLACK_API_TOKEN'],
           channel: '#times_webyko',
           text: return_result['result'],
-          as_user: 'true'
+          as_user: true
+        }
       )
       'ok'
     end
