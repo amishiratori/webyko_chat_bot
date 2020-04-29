@@ -19,7 +19,7 @@ post '/callback' do
     if request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
       message = request_body['event']['text']
 
-      if message.include?('joined #times_webyko')
+      if message.include?('joined')
         user = request_body['event']['name']
         return_text = "#{user}さんこんにちは！\nうぇびこの部屋へようこそ！"
         puts return_text
