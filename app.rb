@@ -16,7 +16,7 @@ post '/callback' do
   when 'url_verification'
     request_body['challenge']
   when 'event_callback'
-    if request_body['event']['channel'] == 'C012PCA7X1B'
+    if request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
       message = request_body['event']['text']
 
       request_content = {
