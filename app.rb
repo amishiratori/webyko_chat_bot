@@ -15,9 +15,6 @@ post '/callback' do
   when 'url_verification'
     request_body['challenge']
   when 'event_callback'
-    Slack.configure do |config|
-      config.token = ENV['SLACK_API_TOKEN']
-    end
     if request_body['event']['channel'] == 'C012PCA7X1B'
       message = request_body['event']['text']
 
