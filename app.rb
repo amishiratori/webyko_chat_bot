@@ -29,6 +29,7 @@ post '/callback' do
         user_info_uri.query = URI.encode_www_form(user_info_params)
         user_info_res = Net::HTTP.get_response(user_info_uri)
         user_name_hash = JSON.parse(user_info_res.body)
+        puts user_name_hash
         user_name = user_name_hash['user']['name']
         return_text = "#{user_name}さんこんにちは！\nうぇびこの部屋へようこそ！"
         puts return_text
