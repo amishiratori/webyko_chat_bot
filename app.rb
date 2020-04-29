@@ -18,7 +18,6 @@ post '/callback' do
   when 'event_callback'
     if request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
       message = request_body['event']['text']
-
       if message.include?('joined')
         user = request_body['event']['name']
         user_info_uri = URI('https://slack.com/api/users.info')
@@ -28,7 +27,8 @@ post '/callback' do
           }
         user_info_uri.query = URI.encode_www_form(user_info_params)
         user_info_res = Net::HTTP.get_response(user_info_uri)
-        user_name = JSON.parse(user_info_res.body)['user']['name']
+        user_name_hash = JSON.parse(user_info_res.body)
+        user_name = user_name_hash['user']['name']
         return_text = "#{user_name}さんこんにちは！\nうぇびこの部屋へようこそ！"
         puts return_text
       else
@@ -43,16 +43,16 @@ post '/callback' do
         return_text = return_hash['result']
         puts return_text
       end
-        slack_uri = URI('https://slack.com/api/chat.postMessage')
-        slack_res = Net::HTTP.post_form(
-          uri,
-          'token' => ENV['SLACK_API_TOKEN'],
-          'channel' => '#times_webyko',
-          'text' => return_text,
-          'as_user' => true
-        )
-        puts slack_res.body
-        'ok'
+      slack_uri = URI('https://slack.com/api/chat.postMessage')
+      slack_res = Net::HTTP.post_form(
+        uri,
+        'token' => ENV['SLACK_API_TOKEN'],
+        'channel' => '#times_webyko',
+        'text' => return_text,
+        'as_user' => true
+      )
+      puts slack_res.body
+      'ok'
     end
   end
 end
