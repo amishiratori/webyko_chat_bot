@@ -54,15 +54,26 @@ post '/callback' do
       )
       puts slack_res.body
       'ok'
-    elsif request_body['event']['channel'].include?('times') && request_body['event']['user'] != 'U012HRJKR6J' && request_body['event']['user'] != 'U012Q76K5T6'
-      slack_uri = URI('https://slack.com/api/reactions.add')
-      slack_res = Net::HTTP.post_form(
+    elsif request_body['event']['user'] != 'U012HRJKR6J' && request_body['event']['user'] != 'U012Q76K5T6'
+      channel_info_uri = URI('https://slack.com/api/channels.info')
+      channel_params = {
         'token' => ENV['SLACK_API_TOKEN'],
-        'channel' => request_body['event']['channel'],
-        'name' => 'webyko_clap',
-        'timestamp' => request_body['event']['ts']
-      )
-      puts slack_res.body
+        'channel' => request_body['event']['channel']
+      }
+      channel_info_uri.query = URI.encode_www_form(channel_params)
+      channel_info_res = Net::HTTP.get_response(channel_info_uri)
+      channel_info_hash = JSON.parse(channel_info_res.body)
+      channel_name = channel_info_hash['channel']['name']
+      if channel_name.include?('times')
+        slack_uri = URI('https://slack.com/api/reactions.add')
+        slack_res = Net::HTTP.post_form(
+          'token' => ENV['SLACK_API_TOKEN'],
+          'channel' => request_body['event']['channel'],
+          'name' => 'webyko_clap',
+          'timestamp' => request_body['event']['ts']
+        )
+        puts slack_res.body
+      end
       'ok'
     end
   end
