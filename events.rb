@@ -29,6 +29,14 @@ events_params = {
 events_uri.query = URI.encode_www_form(events_params)
 events_res = Net::HTTP.get_response(events_uri)
 events_hash = JSON.parse(events_res.body)
+
+events_hash['events'].each_with_index do |event, i|
+  tmp_time = Time.iso8601(event['started_at'])
+  if tmp_time < Time.now()
+    events_hash['events'].delete_at(i)
+  end
+end
+
 random = Random.new()
 rand_index = random.rand(events_hash['events'].length)
 selected_event = events_hash['events'][rand_index]
