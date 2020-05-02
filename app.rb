@@ -57,8 +57,8 @@ post '/callback' do
     elsif request_body['event']['user'] != 'U012HRJKR6J' && request_body['event']['user'] != 'U012Q76K5T6'
       channel_info_uri = URI('https://slack.com/api/channels.info')
       channel_params = {
-        'token': ENV['SLACK_API_TOKEN'],
-        'channel': request_body['event']['channel']
+        token: ENV['SLACK_API_TOKEN'],
+        channel: request_body['event']['channel']
       }
       channel_info_uri.query = URI.encode_www_form(channel_params)
       channel_info_res = Net::HTTP.get_response(channel_info_uri)
