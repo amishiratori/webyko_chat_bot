@@ -54,6 +54,16 @@ post '/callback' do
       )
       puts slack_res.body
       'ok'
+    elsif request_body['event']['channel'].include?('times') && request_body['event']['user'] != 'U012HRJKR6J' && request_body['event']['user'] != 'U012Q76K5T6'
+      slack_uri = URI('https://slack.com/api/reactions.add')
+      slack_res = Net::HTTP.post_form(
+        'token' => ENV['SLACK_API_TOKEN'],
+        'channel' => request_body['event']['channel'],
+        'name' => 'webyko_clap',
+        'timestamp' => request_body['event']['ts']
+      )
+      puts slack_res.body
+      'ok'
     end
   end
 end
