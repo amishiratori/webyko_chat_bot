@@ -5,4 +5,15 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'dotenv'
 gem 'slack-ruby-client'
-gem 'async-websocket', '~> 0.8.0'
+
+gem 'rake'
+gem 'activerecord', '5.2.3'
+gem 'sinatra-activerecord'
+
+group :development do
+  gem 'sqlite3', '1.4.1'
+end
+
+group :production do
+  gem 'pg', '0.21'
+end

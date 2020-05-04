@@ -5,6 +5,7 @@ require 'json'
 require 'dotenv'
 require 'net/http'
 require 'slack-ruby-client'
+require './models'
 
 Dotenv.load
 
@@ -55,7 +56,7 @@ post '/callback' do
       puts slack_res.body
       'ok'
     elsif request_body['event']['user'] != 'U012HRJKR6J' && request_body['event']['user'] != 'U012Q76K5T6'
-      channel_info_uri = URI('https://slack.com/api/channels.info')
+      channel_info_uri = URI('https://slack.com/api/conversations.info')
       channel_params = {
         token: ENV['SLACK_API_TOKEN'],
         channel: request_body['event']['channel']
@@ -66,15 +67,13 @@ post '/callback' do
       channel_name = channel_info_hash['channel']['name']
       puts channel_name
       if channel_name.include?('times')
-        slack_uri = URI('https://slack.com/api/reactions.add')
-        slack_res = Net::HTTP.post_form(
-          slack_uri,
-          'token' => ENV['SLACK_API_TOKEN'],
-          'channel' => request_body['event']['channel'],
-          'name' => 'webyko_clap',
-          'timestamp' => request_body['event']['ts']
-        )
-        puts slack_res.body
+        random = Random.new
+        if random.rand < 0.3
+          Post.create(
+            channel: request_body['event']['channel'],
+            ts: request_body['event']['ts']
+          )
+        end
       end
       'ok'
     end
