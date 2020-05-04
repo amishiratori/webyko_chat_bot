@@ -10,9 +10,9 @@ gem 'rake'
 gem 'activerecord', '5.2.3'
 gem 'sinatra-activerecord'
 
-group :development do
+# group :development do
   gem 'sqlite3', '1.4.1'
-end
+# end
 
 group :production do
   gem 'pg', '0.21'
