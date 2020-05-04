@@ -67,8 +67,9 @@ post '/callback' do
       channel_name = channel_info_hash['channel']['name']
       puts channel_name
       if channel_name.include?('times')
-        random = Random.new
-        if random.rand < 0.3
+        random = Random.new.rand
+        puts random
+        if random < 0.3
           Post.create(
             channel: request_body['event']['channel'],
             ts: request_body['event']['ts']
