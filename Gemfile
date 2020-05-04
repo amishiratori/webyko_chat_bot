@@ -11,7 +11,7 @@ gem 'activerecord', '5.2.3'
 gem 'sinatra-activerecord'
 
 group :development do
-  gem 'sqlite3', '1.4.1'
+  gem 'sqlite3', '~>1.4.1'
 end
 
 group :production do

@@ -57,7 +57,7 @@ GEM
       gli
       hashie
       websocket-driver
-    sqlite3 (1.4.1)
+    sqlite3 (1.4.2)
     thread_safe (0.3.6)
     tilt (2.0.10)
     tzinfo (1.2.7)
@@ -78,10 +78,10 @@ DEPENDENCIES
   sinatra-activerecord
   sinatra-contrib
   slack-ruby-client
-  sqlite3 (= 1.4.1)
+  sqlite3 (~> 1.4.1)
 
 RUBY VERSION
    ruby 2.6.2p47
 
 BUNDLED WITH
-   2.1.4
+   2.0.2
