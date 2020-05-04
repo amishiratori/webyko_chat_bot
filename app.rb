@@ -79,4 +79,5 @@ post '/callback' do
       'ok'
     end
   end
+  'ok'
 end
