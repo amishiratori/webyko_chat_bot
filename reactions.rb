@@ -21,3 +21,5 @@ posts.each do |post|
 end
 
 Post.all.delete_all
+
+'ok'
