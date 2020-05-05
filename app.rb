@@ -15,7 +15,7 @@ Dotenv.load
 
 OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'.freeze
 APPLICATION_NAME = 'TEST'.freeze
-CREDENTIALS_PATH = {
+CREDENTIALS = {
   web: {
     client_id: ENV['CLIENT_ID'],
     project_id: ENV['PROJECT_ID'],
@@ -74,6 +74,7 @@ post '/callback' do
         else
           name = user_name_hash['user']['profile']['real_name']
         end
+        puts name
         trainee = Trainee.find_by(slack_name: name)
 
         service = Google::Apis::SheetsV4::SheetsService.new
