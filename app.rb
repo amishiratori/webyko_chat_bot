@@ -42,7 +42,7 @@ post '/callback' do
           service = Google::Apis::SheetsV4::SheetsService.new
           service.key = ENV['GOOGLE_API_KEY']
           sheet_id = ENV['SHEET_ID']
-          range = "#{announcement.col}#{trainee.row}"
+          range = "#{announcement.column}#{trainee.row}"
           response = service.get_spreadsheet_values(sheet_id, range)
           cell_value = response.values[0]
           if cell_value == ''
