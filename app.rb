@@ -20,10 +20,10 @@ post '/callback' do
   case request_body['type']
   when 'url_verification'
     request_body['challenge']
-  when 'reaction_added'
-    channel = request_body['item']['channel']
-    ts = request_body['item']['ts']
-    announcement = Announcement.find_by(channel: channel, ts: ts)
+  # when 'reaction_added'
+  #   channel = request_body['item']['channel']
+  #   ts = request_body['item']['ts']
+  #   announcement = Announcement.find_by(channel: channel, ts: ts)
   when 'event_callback'
     if request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
       if request_body['event'].has_key?('text')
