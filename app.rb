@@ -22,7 +22,7 @@ CREDENTIALS_PATH = {
     auth_uri: ENV['AUTH_URI'],
     token_uri: ENV['TOKEN_URI'],
     auth_provider_x509_cert_url: ENV['CERT_URL'],
-    client_secret: ENV['CLIENT_SECRETE'],
+    client_secret: ENV['CLIENT_SECRET'],
     redirect_uris: [ENV['REDIRECT_URI']]
   }
 }
