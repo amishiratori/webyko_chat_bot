@@ -2,3 +2,4 @@
 .env
 test.rb
 *.db
+db/seeds.rb

@@ -104,3 +104,12 @@ post '/new_announcement' do
 
   'ok'
 end
+
+post '/check_reactions' do
+  request_body = JSON.parse(request.body.read)
+  puts request_body
+  case request_body['type']
+  when 'url_verification'
+    request_body['challenge']
+  end
+end

@@ -6,3 +6,6 @@ end
 
 class Announcement < ActiveRecord::Base
 end
+
+class Trainee < ActiveRecord::Base
+end
