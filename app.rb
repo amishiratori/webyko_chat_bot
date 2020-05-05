@@ -87,5 +87,20 @@ end
 
 post '/new_announcement' do
   puts request.body.read
+  col = params[:col].to_i
+  url = params[:url]
+  name = params[:name]
+
+  url = url.split('/')
+  channel = url[4]
+  ts = url[5].delete('p').split('').insert(10, '.').join('')
+
+  Announcement.find_or_create_by(
+    name: name,
+    channel: channel,
+    ts: ts,
+    column: col
+  )
+
   'ok'
 end
