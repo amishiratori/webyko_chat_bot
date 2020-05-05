@@ -144,5 +144,5 @@ post '/add_trainees' do
     slack_name: params[:slack_name],
     row: params[:row].to_i
   )
-  "created trainee: #{trainee.name trainne.slack_name trainee.row}"
+  "created trainee: #{trainee.name trainee.slack_name trainee.row}"
 end
