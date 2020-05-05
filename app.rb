@@ -15,12 +15,22 @@ Dotenv.load
 
 OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'.freeze
 APPLICATION_NAME = 'TEST'.freeze
-CREDENTIALS_PATH = 'credentials.json'.freeze
+CREDENTIALS_PATH = {
+  web: {
+    client_id: ENV['CLIENT_ID'],
+    project_id: ENV['PROJECT_ID'],
+    auth_uri: ENV['AUTH_URI'],
+    token_uri: ENV['TOKEN_URI'],
+    auth_provider_x509_cert_url: ENV['CERT_URL'],
+    client_secret: ENV['CLIENT_SECRETE'],
+    redirect_uris: [ENV['REDIRECT_URI']]
+  }
+}
 TOKEN_PATH = 'token.yaml'.freeze
-SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
+SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS
 
 def authorize
-  client_id = Google::Auth::ClientId.from_file CREDENTIALS_PATH
+  client_id = Google::Auth::ClientId.hash CREDENTIALS
   token_store = Google::Auth::Stores::FileTokenStore.new file: TOKEN_PATH
   authorizer = Google::Auth::UserAuthorizer.new client_id, SCOPE, token_store
   user_id = "default"
