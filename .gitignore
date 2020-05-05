@@ -3,3 +3,4 @@
 test.rb
 *.db
 db/seeds.rb
+*.json

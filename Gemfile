@@ -10,6 +10,8 @@ gem 'rake'
 gem 'activerecord', '5.2.3'
 gem 'sinatra-activerecord'
 
+gem 'google-api-client'
+
 group :development do
   gem 'sqlite3', '~>1.4.1'
 end
