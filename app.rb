@@ -83,3 +83,9 @@ post '/callback' do
   end
   'ok'
 end
+
+
+post '/new_announcement' do
+  puts params
+  'ok'
+end
