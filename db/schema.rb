@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_05_050153) do
+ActiveRecord::Schema.define(version: 2020_05_05_135020) do
 
   create_table "announcements", force: :cascade do |t|
     t.string "name"
     t.string "channel"
     t.string "ts"
-    t.integer "column"
+    t.string "column"
   end
 
   create_table "posts", force: :cascade do |t|
