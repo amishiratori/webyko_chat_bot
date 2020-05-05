@@ -86,6 +86,6 @@ end
 
 
 post '/new_announcement' do
-  puts params
+  puts request.body.read
   'ok'
 end
