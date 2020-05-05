@@ -38,14 +38,19 @@ post '/callback' do
         end
         puts name
         trainee = Trainee.find_by(slack_name: name)
-
-        service = Google::Apis::SheetsV4::SheetsService.new
-        service.key = ENV['GOOGLE_API_KEY']
-        sheet_id = ENV['SHEET_ID']
-        range = "#{announcement.col}#{trainee.row}"
-        response = service.get_spreadsheet_values(sheet_id, range)
-        response.values.each do |row|
-          puts row
+        if trainee
+          service = Google::Apis::SheetsV4::SheetsService.new
+          service.key = ENV['GOOGLE_API_KEY']
+          sheet_id = ENV['SHEET_ID']
+          range = "#{announcement.col}#{trainee.row}"
+          response = service.get_spreadsheet_values(sheet_id, range)
+          cell_value = response.values[0]
+          if cell_value == ''
+            value_range = Google::Apis::SheetsV4::ValueRange.new
+            value_range = range
+            value_range.values = ['done']
+            response = service.update_spreadsheet_value(sheet_id, value_range.range, value_range)
+          end
         end
       end
     elsif request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
