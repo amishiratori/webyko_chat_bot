@@ -13,6 +13,30 @@ require './models'
 
 Dotenv.load
 
+OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'.freeze
+APPLICATION_NAME = 'TEST'.freeze
+CREDENTIALS_PATH = 'credentials.json'.freeze
+TOKEN_PATH = 'token.yaml'.freeze
+SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
+
+def authorize
+  client_id = Google::Auth::ClientId.from_file CREDENTIALS_PATH
+  token_store = Google::Auth::Stores::FileTokenStore.new file: TOKEN_PATH
+  authorizer = Google::Auth::UserAuthorizer.new client_id, SCOPE, token_store
+  user_id = "default"
+  credentials = authorizer.get_credentials user_id
+  if credentials.nil?
+    url = authorizer.get_authorization_url base_url: OOB_URI
+    puts "Open the following URL in the browser and enter the " \
+         "resulting code after authorization:\n" + url
+    code = gets
+    credentials = authorizer.get_and_store_credentials_from_code(
+      user_id: user_id, code: code, base_url: OOB_URI
+    )
+  end
+  credentials
+end
+
 
 post '/callback' do
   request_body = JSON.parse(request.body.read)
@@ -26,6 +50,30 @@ post '/callback' do
       channel = request_body['event']['item']['channel']
       ts = request_body['event']['item']['ts']
       announcement = Announcement.find_by(channel: channel, ts: ts)
+      if announcement
+        user_info_uri = URI('https://slack.com/api/users.info')
+        user_info_params = {
+          token: ENV['SLACK_API_TOKEN'],
+          user: user
+        }
+        user_info_uri.query = URI.encode_www_form(user_info_params)
+        user_info_res = Net::HTTP.get_response(user_info_uri)
+        user_name_hash = JSON.parse(user_info_res.body)
+        unless user_name_hash['user']['profile']['display_name'] == ''
+          name = user_name_hash['user']['profile']['display_name']
+        else
+          name = user_name_hash['user']['profile']['real_name']
+        end
+        trainee = Trainee.find_by(slack_name: name)
+
+        service = Google::Apis::SheetsV4::SheetsService.new
+        service.client_options.application_name = APPLICATION_NAME
+        service.authorization = authorize
+        spreadsheet_id = ENV['SHEET_ID']
+        range = "Sheet1!J10"
+        response = service.get_spreadsheet_values(spreadsheet_id, range)
+        puts response.to_json
+      end
     elsif request_body['event']['channel'] == 'C012PCA7X1B' && request_body['event']['user'] != 'U012HRJKR6J'
       if request_body['event'].has_key?('text')
         message = request_body['event']['text']
