@@ -30,7 +30,7 @@ TOKEN_PATH = 'token.yaml'.freeze
 SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS
 
 def authorize
-  client_id = Google::Auth::ClientId.hash CREDENTIALS
+  client_id = Google::Auth::ClientId.from_hash CREDENTIALS
   token_store = Google::Auth::Stores::FileTokenStore.new file: TOKEN_PATH
   authorizer = Google::Auth::UserAuthorizer.new client_id, SCOPE, token_store
   user_id = "default"
