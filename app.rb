@@ -125,7 +125,7 @@ post '/new_announcement' do
   url = url.split('/')
   channel = url[4]
   ts = url[5].delete('p').split('').insert(10, '.').join('')
-  col = ('a'..'z').to_a[col] || n.to_s
+  col = ('a'..'z').to_a[col-1] || n.to_s
 
   Announcement.find_or_create_by(
     name: name,
