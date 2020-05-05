@@ -42,7 +42,7 @@ post '/callback' do
         service = Google::Apis::SheetsV4::SheetsService.new
         service.key = ENV['GOOGLE_API_KEY']
         sheet_id = ENV['SHEET_ID']
-        range = 'J10'
+        range = "#{announcement.col}#{trainee.row}"
         response = service.get_spreadsheet_values(sheet_id, range)
         response.values.each do |row|
           puts row
@@ -135,4 +135,14 @@ post '/new_announcement' do
   )
 
   'ok'
+end
+
+
+post '/add_trainees' do
+  trainee = Trainee.find_or_create_by(
+    name: params[:name],
+    slack_name: params[:slack_name],
+    row: params[:row].to_i
+  )
+  "created trainee: #{trainee.name trainne.slack_name trainee.row}"
 end
