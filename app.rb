@@ -45,7 +45,7 @@ post '/callback' do
           range = "#{announcement.column}#{trainee.row}"
           response = service.get_spreadsheet_values(sheet_id, range)
           puts response.values
-          cell_value = response.values[0]
+          cell_value = response.values
           if cell_value == ''
             value_range = Google::Apis::SheetsV4::ValueRange.new
             value_range = range
