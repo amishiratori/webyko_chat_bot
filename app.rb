@@ -154,3 +154,64 @@ post '/add_trainees' do
   )
   "created trainee"
 end
+
+post '/chec_announcement' do
+  link = params[:link]
+  col = params[:col]
+  url = link.split('/')
+  channel = url[4]
+  ts = url[5].delete('p').split('').insert(10, '.').join('')
+  reaction_info_uri = URI('https://slack.com/api/reactions.get')
+  reaction_info_params = {
+      token: ENV['SLACK_API_TOKEN'],
+      channel: channel,
+      timestamp: ts ,
+    }
+  reaction_info_uri.query = URI.encode_www_form(reaction_info_params)
+  reaction_info_res = Net::HTTP.get_response(reaction_info_uri)
+  reaction_name_hash = JSON.parse(reaction_info_res.body)
+  reactions =  reaction_name_hash['message']['reactions']
+  reacted_users = []
+  reactions.each do |reaction|
+    users = reaction['users']
+    users.each do |user|
+      user_info_uri = URI('https://slack.com/api/users.info')
+      user_info_params = {
+        token: ENV['SLACK_API_TOKEN'],
+        user: user
+      }
+      user_info_uri.query = URI.encode_www_form(user_info_params)
+      user_info_res = Net::HTTP.get_response(user_info_uri)
+      user_name_hash = JSON.parse(user_info_res.body)
+      unless user_name_hash['user']['profile']['display_name'] == ''
+        name = user_name_hash['user']['profile']['display_name']
+      else
+        name = user_name_hash['user']['profile']['real_name']
+      end
+      trainee = Trainee.find_by(slack_name: name)
+      if trainee
+        reacted_users << name
+        SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS
+        authorization = Google::Auth.get_application_default(SCOPE)
+        service = Google::Apis::SheetsV4::SheetsService.new
+        service.key = ENV['GOOGLE_API_KEY']
+        service.authorization = authorization
+        sheet_id = ENV['SHEET_ID']
+        range = "#{col}#{trainee.row}"
+        response = service.get_spreadsheet_values(sheet_id, range)
+        puts response.values
+        cell_value = response.values
+        value_range = Google::Apis::SheetsV4::ValueRange.new
+        value_range.range = range
+        value_range.values = [['done']]
+        value_input_option = 'USER_ENTERED'
+        response = service.update_spreadsheet_value(sheet_id, value_range.range, value_range, value_input_option: value_input_option)
+      end
+    end
+  end
+  reacted_users = reacted_users.uniq
+  reacted_users.delete(ENV['TEST_USER'])
+  response = JSON.pretty_generate({reacted_trainees: reacted_users.length, reacted_users: reacted_users})
+  puts response
+  response
+end
