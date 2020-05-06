@@ -155,7 +155,7 @@ post '/add_trainees' do
   "created trainee"
 end
 
-post '/chec_announcement' do
+post '/check_announcement' do
   link = params[:link]
   col = params[:col]
   url = link.split('/')
