@@ -133,8 +133,14 @@ post '/new_announcement' do
   url = url.split('/')
   channel = url[4]
   ts = url[5].delete('p').split('').insert(10, '.').join('')
-  col = ('a'..'z').to_a[col-1] || n.to_s
-
+  if col <= 26
+    col = ('a'..'z').to_a[col-1]
+  else
+    tmp = ''
+    tmp << ('a'..'z').to_a[col/26-1]
+    col -= 26
+    tmp << ('a'..'z').to_a[col-1]
+  end
   Announcement.find_or_create_by(
     name: name,
     channel: channel,
