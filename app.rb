@@ -140,6 +140,7 @@ post '/new_announcement' do
     tmp << ('a'..'z').to_a[col/26-1]
     col -= 26
     tmp << ('a'..'z').to_a[col-1]
+    col = tmp
   end
   Announcement.find_or_create_by(
     name: name,
